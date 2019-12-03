@@ -1,6 +1,5 @@
 package com.gmail.sahnert2;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,11 +10,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 public final class MainActivity extends AppCompatActivity {
-    private int startNum = (int) (Math.random() * 100); // COULD MAKE DIFFERENT LEVELS AND CHANGE THE DIFFICULTY HERE(ie 10 instead of 100)
-    //private int secondNum;
-    private int secondNum = (int) (Math.random() * 100);
+    private int startNum; // COULD MAKE DIFFERENT LEVELS AND CHANGE THE DIFFICULTY HERE(ie 10 instead of 100)
+    private int secondNum;
     private int ans;
     private String operation;
+    private static int score = 0;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +28,8 @@ public final class MainActivity extends AppCompatActivity {
                 EditText userAnswer = findViewById(R.id.userAnswer);
                 int compare = Integer.parseInt(userAnswer.getText().toString());
                 if (compare == ans) {
-                    correct();
+                    generateNumber();
+                    score++;
                 } else {
                     endGame();
                 }
@@ -37,8 +37,9 @@ public final class MainActivity extends AppCompatActivity {
         });
     }
     private void generateNumber() {
-        int pemdas = pemdas();
-        switch (pemdas) {
+        startNum = (int) (Math.random() * 100);
+        secondNum = (int) (Math.random() * 100);
+        switch (pemdas()) {
             case(1):
                 operation = " multiplied by ";
                 ans = (startNum * secondNum);
@@ -49,6 +50,11 @@ public final class MainActivity extends AppCompatActivity {
                 break;
             case(3):
                 operation = " minus ";
+                if (secondNum > startNum) {
+                    int swap = secondNum;
+                    secondNum = startNum;
+                    startNum = swap;
+                }
                 ans = (startNum - secondNum);
                 break;
             default:
@@ -71,16 +77,11 @@ public final class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("Go back to home", null); //just go back home
         builder.create().show();
     }
-    private void correct() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Correct continue on to try for a high score?");
-        builder.setNegativeButton("Yes, continue!", null); //refresh somehow
-        builder.setPositiveButton("Go back to home", null); //just go back home
-        builder.create().show();
-    }
-    private void refresh() {
-        Intent toStartGame = new Intent(this, NewGame.class);
-        startActivity(toStartGame);
-        finish();
-    }
+//    private void correct() {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setMessage("Correct!");
+//        builder.setNegativeButton("Yes, continue!", null); //refresh somehow
+//        builder.setPositiveButton("Go back to home", null); //just go back home
+//        builder.create().show();
+//    }
 }
